@@ -13,7 +13,7 @@ feature = train.drop('label', axis=1)
 label = train[['label']]
 
 
-# 设置一个阈值，为0-255之间，大于该值的设置为 255， 小于该值的设置为0
+# 设置一个阈值，为0-255之间，大于该值的设置为 255， 小于该值的设置为346
 
 threshold = 100
 feature[feature >= threshold] = 255
