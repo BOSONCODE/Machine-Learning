@@ -8,6 +8,7 @@ Objective Function:
 J(W, H) = min_{W,H}{\frac{1}{2}||V - WH||_F^2}, subject to W >= 0, H >= 0
 
 给定 V 属于 (R+)(nxm) 寻找非负矩阵W属于(R+)(nxr)和非负矩阵H属于(R+)(rxm), 使得 WH逼近V
+W is the basis matrix, H is the coefficient matrix as well as the construction of V
 
 具体的推导过程如下:
 \frac{grad(J(W, H))}{W_{ik}} = (VH')_{ik} - (WHH')_{ik}
@@ -26,36 +27,31 @@ H_{kj} = H_{kj}*\frac{(W'V)_{kj}}{(W'WH)_{kj}}
 import numpy as np
 
 #input V(n, m), W(n, r), H(r, m)
-#n denotes the sample number, m denotes the dimension r denotes the reduced dimension
+#m denotes the sample number, n denotes the dimension 
 def NMF(V, Winit, Hinit, maxIter, n, r, m):
-    assert(r <= m)
     W = np.array(Winit, dtype = np.float).reshape(n, r)
     H = np.array(Hinit, dtype=np.float).reshape(r, m)
     for iter in range(maxIter):
         #update W
         VH = V @ H.transpose()
         WHH = W @ H @ H.transpose()
-        for i in range(n):
-            for k in range(r):
-                W[i, k] = W[i, k] * (VH[i, k] / WHH[i, k])
+        W = W * (VH / WHH)
         #update H
         WV = W.transpose() @ V
         WWH = W.transpose() @ W @ H
-        for k in range(r):
-            for j in range(m):
-                H[k, j] = H[k, j] * (WV[k, j] / WWH[k, j])
+        H = H * (WV / WWH)
     return W, H
 
 if __name__ == "__main__":
     # Generate a target Matrix
-    origin_W = np.random.randint(0, 9, size=(5, 2))
-    origin_H = np.random.randint(0, 9, size=(2, 5))
+    origin_W = np.random.randint(1, 9, size=(5, 2))
+    origin_H = np.random.randint(1, 9, size=(2, 5))
     v = np.dot(origin_W, origin_H)
     print('the initial matrix:', v)
 
     # Generate initial Matrix W and H (Random generation)
-    w = np.random.randint(0, 9,size=(5, 2))
-    h = np.random.randint(0, 9, size=(2, 5))
+    w = np.random.randint(1, 9,size=(5, 2))
+    h = np.random.randint(1, 9, size=(2, 5))
     
     W, H = NMF(v, w, h, 100, 5, 2, 5)
     print('reconstruct matrix:', W@H)
