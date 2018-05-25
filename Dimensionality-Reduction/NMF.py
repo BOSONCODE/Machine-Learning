@@ -28,6 +28,7 @@ import numpy as np
 #input V(n, m), W(n, r), H(r, m)
 #n denotes the sample number, m denotes the dimension r denotes the reduced dimension
 def NMF(V, Winit, Hinit, maxIter, n, r, m):
+    assert(r <= m)
     W = np.array(Winit, dtype = np.float).reshape(n, r)
     H = np.array(Hinit, dtype=np.float).reshape(r, m)
     for iter in range(maxIter):
