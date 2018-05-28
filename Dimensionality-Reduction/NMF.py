@@ -28,7 +28,9 @@ import numpy as np
 
 #input V(n, m), W(n, r), H(r, m)
 #m denotes the sample number, n denotes the dimension 
-def NMF(V, Winit, Hinit, maxIter, n, r, m):
+def NMF(V, maxIter, n, r, m):
+    Winit = np.random.randint(1, 9, size=(n, r))
+    Hinit = np.random.randint(1, 9, size=(r, m))
     W = np.array(Winit, dtype = np.float).reshape(n, r)
     H = np.array(Hinit, dtype=np.float).reshape(r, m)
     for iter in range(maxIter):
@@ -52,6 +54,6 @@ if __name__ == "__main__":
     # Generate initial Matrix W and H (Random generation)
     w = np.random.randint(1, 9,size=(5, 2))
     h = np.random.randint(1, 9, size=(2, 5))
-    
-    W, H = NMF(v, w, h, 100, 5, 2, 5)
+    W, H = NMF(v, 100, 5, 2, 5)
+    print(H)
     print('reconstruct matrix:', W@H)
