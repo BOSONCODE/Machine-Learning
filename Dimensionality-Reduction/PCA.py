@@ -11,7 +11,6 @@ def PCA(X, d):
     X = np.array(X, dtype = np.float)
     meanX = np.mean(X, axis=0)
     X = X - meanX
-
     A = np.cov(X, rowvar = 0) #rowvar 表示每一行为一个样本
     eigVals, eigVector = np.linalg.eig(np.mat(A))
     eigValsIndice = np.argsort(eigVals)
@@ -21,6 +20,6 @@ def PCA(X, d):
 
 if __name__ == '__main__':
     a = [[1, 2, 3], [2, 3, 4]]
-    P = PCA(a, 2)
+    P = PCA(a, 3)
     print(a@P)
     

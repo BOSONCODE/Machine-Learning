@@ -52,8 +52,9 @@ def Image_Select(rd_data, rd_labels, selected_images):
         individual_test_labels = rd_labels[individual_idx[selected_images:]]
 
         test_data = np.concatenate((test_data, individual_test_data), axis = 0)
-        test_label = np.concatenate((test_label, individual_test_labels), axis = 0)
-
+        test_label = np.concatenate((test_label, individual_test_labels), axis=0)
+    return data, label, test_data, test_label
+'''
     # shuffle
     idx = np.arange(data.shape[0])
     np.random.shuffle(idx)
@@ -69,9 +70,33 @@ def Image_Select(rd_data, rd_labels, selected_images):
 
     #print("train size:", data.shape)
     #print("test size:", test_data.shape)
-
-    return data, label, test_data, test_label
+'''
     
+    
+def unsupervised_DR(X, d, name = "PCA"):
+    if name == "PCA":
+        import PCA
+        P = PCA.PCA(X, d)
+        '''from sklearn.decomposition import PCA
+        pca = PCA(n_components=d)
+        data = pca.fit_transform(X)
+        return data'''
+        return X @ P
+    elif name == "LE":
+        import LaplacianEigenmaps
+        val, data = LaplacianEigenmaps.LE(X, 5, 1)
+        return data[:, d]
+    elif name == "none":
+        return X
+
+def Classify2(data, label, test_data, test_label, method="KNN"):
+    if method == "KNN":
+        newData = unsupervised_DR(data, 14, "PCA")
+        knn = neighbors.KNeighborsClassifier(n_neighbors=1)
+        knn.fit(newData, label)
+        newTestData = unsupervised_DR(test_data, 14, "PCA")
+        p_acc = knn.score(newTestData, test_label, sample_weight=None)
+        print(p_acc)
 
 def Classify(data, label, test_data, test_label, method = "KNN"):
     if method == "KNN":
@@ -101,4 +126,4 @@ if __name__ == '__main__':
         #test_data = DR_supervised(test_data, test_label, 1024, method = "LDA")
         #data = DR_Unsupervised(data, 20, method="PCA")
         #test_data = DR_Unsupervised(test_data, 20, method = "PCA")
-    Classify(data, label, test_data, test_label, method="KNN")
+    Classify2(data, label, test_data, test_label, method="KNN")
